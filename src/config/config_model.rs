@@ -17,13 +17,13 @@ pub struct Database {
 }
 
 #[derive(Debug, Clone)]
-pub struct AdventurerSecret {
+pub struct AdventurersSecret {
     pub secret: String,
     pub refresh_token: String,
 }
 
 #[derive(Debug, Clone)]
-pub struct GuildCommanderSecret {
+pub struct GuildCommandersSecret {
     pub secret: String,
     pub refresh_token: String,
 }
