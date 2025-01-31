@@ -2,7 +2,7 @@ use std::sync::Arc;
 use anyhow::Result;
 use crate::domain::repositories::{crew_switchboard::CrewSwitchBoardRepository, quest_viewing::QuestViewingRepository};
 
-pub struct CrewSwitchboardUserCase<T1, T2>
+pub struct CrewSwitchboardUseCase<T1, T2>
 where 
     T1: CrewSwitchBoardRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
@@ -11,7 +11,7 @@ where
     quest_viewing_repository: Arc<T2>,
 }
 
-impl <T1, T2> CrewSwitchboardUserCase<T1, T2>
+impl <T1, T2> CrewSwitchboardUseCase<T1, T2>
 where 
     T1: CrewSwitchBoardRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,

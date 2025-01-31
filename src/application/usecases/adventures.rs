@@ -2,14 +2,14 @@ use std::sync::Arc;
 use anyhow::Result;
 use crate::domain::{repositories::adventures::AdventurersRepository, value_object::adventurer_model::RegisterAdventurerModel};
 
-pub struct AdventurersUserCase<T>
+pub struct AdventurersUseCase<T>
 where 
     T: AdventurersRepository + Send + Sync
 {
     pub adventurers_repository: Arc<T>,
 }   
 
-impl <T> AdventurersUserCase<T>
+impl <T> AdventurersUseCase<T>
 where 
     T: AdventurersRepository + Send + Sync
 {
