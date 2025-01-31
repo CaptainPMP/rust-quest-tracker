@@ -4,7 +4,8 @@ use axum::async_trait;
 
 use crate::{
     domain::{
-        entities::adventurers::{AdventurerEntity, RegisterAdventurerEntity}, repositories::adventures::AdventurersRepository,
+        entities::adventurers::{AdventurerEntity, RegisterAdventurerEntity},
+        repositories::adventures::AdventurersRepository,
     },
     infrastructure::postgres::postgres_connection::PgPoolSquad,
 };
