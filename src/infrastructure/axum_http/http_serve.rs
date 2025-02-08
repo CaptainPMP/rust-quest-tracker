@@ -1,20 +1,36 @@
-use std::{default, net::SocketAddr, sync::Arc, time::Duration};
 use anyhow::Result;
 use axum::{http::Method, routing::get, Router};
+use std::{default, net::SocketAddr, sync::Arc, time::Duration};
 use tokio::net::TcpListener;
-use tower_http::{cors::{Any, CorsLayer}, limit::RequestBodyLimitLayer, timeout::TimeoutLayer, trace::TraceLayer};
+use tower_http::{
+    cors::{Any, CorsLayer},
+    limit::RequestBodyLimitLayer,
+    timeout::TimeoutLayer,
+    trace::TraceLayer,
+};
 use tracing::info;
 
-use crate::{config::config_model::DotEnvyConfig, infrastructure::postgres::postgres_connection::PgPoolSquad};
+use crate::{
+    config::config_model::DotEnvyConfig,
+    infrastructure::{axum_http::routers, postgres::postgres_connection::PgPoolSquad},
+};
 
 use super::default_routers;
 
 pub async fn start(config: Arc<DotEnvyConfig>, db_pool: Arc<PgPoolSquad>) -> Result<()> {
     let app = Router::new()
         .fallback(default_routers::not_found)
+        .nest(
+            "/authentication",
+            routers::authentication::routes(Arc::clone(&db_pool)),
+        )
         .route("/health_check", get(default_routers::health_check))
-        .layer(TimeoutLayer::new(Duration::from_secs(config.server.timeout)))
-        .layer(RequestBodyLimitLayer::new((config.server.body_limit * 1024 * 1024).try_into()?))
+        .layer(TimeoutLayer::new(Duration::from_secs(
+            config.server.timeout,
+        )))
+        .layer(RequestBodyLimitLayer::new(
+            (config.server.body_limit * 1024 * 1024).try_into()?,
+        ))
         .layer(
             CorsLayer::new()
                 .allow_methods([
@@ -24,8 +40,7 @@ pub async fn start(config: Arc<DotEnvyConfig>, db_pool: Arc<PgPoolSquad>) -> Res
                     Method::PATCH,
                     Method::DELETE,
                 ])
-                .allow_origin(Any)
-                // Any should change on production
+                .allow_origin(Any), // Any should change on production
         )
         .layer(TraceLayer::new_for_http());
 
